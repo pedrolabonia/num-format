@@ -12,6 +12,14 @@ fn main() {
     let bindings = Builder::default()
         .header(headers)
         .rust_target(RustTarget::Stable_1_33)
+        // https://github.com/rust-lang/rust-bindgen/issues/2500
+        // This only disables avx512 for bindgen parsing the heaers, not for the actual build,
+        // this should be fine, since avx512 types are not exposed in the public API, they are
+        // only an implementation detail.
+        // .clang_arg("-DCROARING_COMPILER_SUPPORTS_AVX512=0")
+        // .clang_arg("-U__AVX2__")
+        .clang_arg("-D__AVX512FP16INTRIN_H")
+        .clang_arg("-D__AVX512VLFP16INTRIN_H")
         .allowlist_var("LOCALE_NAME_MAX_LENGTH")
         .allowlist_var("LOCALE_NAME_SYSTEM_DEFAULT")
         .allowlist_var("LOCALE_SDECIMAL")
